@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 // import Dashboard from "views/Dashboard.jsx";
 // import ClientForm from "views/ClientForm.jsx";
 // import JobForm from "views/JobForm.jsx";
@@ -24,21 +8,31 @@
 // import Maps from "views/Maps.jsx";
 // import Notifications from "views/Notifications.jsx";
 // import Upgrade from "views/Upgrade.jsx";
-// import EmployeeForm from "views/EmployeeForm.jsx";
+import EmployeeForm from "views/EmployeeForm.jsx";
 
 //---
 import DbConnection from "views/DbConnection.jsx";
-
+import DbConnecionForm from "views/DbConnecionForm.jsx";
 //--
 
 
 const dashboardRoutes = [
   {
-    path: "/dbConnection",
-    name: "Connection",
+    path: "/dbConnectionList",
+    name: "Connection List",
     icon: "pe-7s-note2",
     component: DbConnection,
-    layout: "/admin"
+    layout: "/admin",
+    display:"yes"
+  }
+  ,
+  {
+    path: "/dbConnectionForm",
+    name: "Db Connection Form",
+    icon: "pe-7s-user",
+    component: DbConnecionForm,
+    layout: "/admin",
+    display:"no"
   }
   // ,
   // {

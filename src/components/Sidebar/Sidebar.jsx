@@ -39,10 +39,23 @@ class Sidebar extends Component {
     this.updateDimensions();
     window.addEventListener("resize", this.updateDimensions.bind(this));
   }
+  getNavitems(prop)
+  {
+    if(prop.display=="yes"){
+    return(
+    <div>
+      <i className={prop.icon} />
+      <p>{prop.name}</p>
+    </div>
+    );}
+    
+  }
   render() {
     const sidebarBackground = {
       backgroundImage: "url(" + this.props.image + ")"
     };
+    
+    
     return (
       <div
         id="sidebar"
@@ -75,7 +88,7 @@ class Sidebar extends Component {
           <ul className="nav">
             {this.state.width <= 991 ? <AdminNavbarLinks /> : null}
             {this.props.routes.map((prop, key) => {
-              if (!prop.redirect)
+              if (!prop.redirect && prop.display=="yes")
                 return (
                   <li
                     className={
@@ -90,8 +103,10 @@ class Sidebar extends Component {
                       className="nav-link"
                       activeClassName="active"
                     >
+                      {/* {this.getNavitems(prop)} */}
                       <i className={prop.icon} />
                       <p>{prop.name}</p>
+                    
                     </NavLink>
                   </li>
                 );

@@ -13,7 +13,8 @@ class DbConnecionForm extends Component {
     this.state={
       items:{},
       errors: {},
-      Id:props.Id
+      //Id:props.Id
+      Id:''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -29,8 +30,12 @@ class DbConnecionForm extends Component {
   
 
   componentDidMount(){
-    //console.log("props=="+this.state.Id);
-    this.fetchDbDetailsById();
+    console.log("props=="+this.state.Id);
+    if(updateId[0]!=0){
+      this.state.Id = updateId[0];
+      this.fetchDbDetailsById();
+    }
+    
   }
   
 
@@ -57,7 +62,10 @@ class DbConnecionForm extends Component {
         var responseLength = Object.keys(json).length;
         if(responseLength!=0){
           console.log("json---"+json[0].dbType);
-          this.setState({items:json[0]});
+          this.setState({
+            items:json[0]
+          });
+          updateId[0] = 0;
         }
       });
     
@@ -194,7 +202,7 @@ class DbConnecionForm extends Component {
   }
   //-------------------------
   render() {
-   
+    
     var {items,firstnameval,configDetails,reportingpersonDetails} = this.state;
     let button;
     //console.log("updateProfile=="+this.state.updateProfile);
@@ -216,7 +224,8 @@ class DbConnecionForm extends Component {
         
    
     return (
-      <div>
+      <div className="content">
+        <Grid fluid>
           <Row>
             <Col md={12}>
               <Card
@@ -286,7 +295,8 @@ class DbConnecionForm extends Component {
               />
             </Col>
             
-          </Row>       
+          </Row>  
+          </Grid>     
       </div>
     );
   }

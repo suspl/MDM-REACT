@@ -600,7 +600,7 @@ var legendBar = {
   names: ["Tesla Model S", "BMW 5 Series"],
   types: ["info", "danger"]
 };
-
+var dbID='ss';
 module.exports = {
   style, // For notifications (App container and Notifications view)
   thArray,
@@ -616,5 +616,6 @@ module.exports = {
   dataBar,
   optionsBar,
   responsiveBar,
-  legendBar // For charts (Dashboard view)
+  legendBar, // For charts (Dashboard view)
+  dbID
 };

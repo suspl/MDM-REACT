@@ -33,7 +33,9 @@ class DbConnection extends Component {
  
   createNewDBDetails(event)
   {
-    this.setState({viewdbDetails:true});
+    //this.setState({viewdbDetails:true});
+    let path = `/admin/dbConnectionForm`;
+    this.props.history.push(path);
   }
 
   getAllDBDetails()
@@ -85,8 +87,13 @@ class DbConnection extends Component {
 
   viewDBDetails(event)
   {
-    this.setState({Id:event.target.id});
-    this.setState({viewdbDetails:true});
+    // this.setState({Id:event.target.id});
+    // this.setState({viewdbDetails:true});
+    
+    updateId[0] = event.target.id;
+    console.log("updateId=="+updateId[0]);
+    let path = `/admin/dbConnectionForm`;
+    this.props.history.push(path);
   }
   
   deleteDBDetails(event)
