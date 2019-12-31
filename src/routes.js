@@ -27,6 +27,15 @@ const dashboardRoutes = [
   }
   ,
   {
+    path: "/dbConnectionForm/:id",
+    name: "Db Connection Form",
+    icon: "pe-7s-user",
+    component: DbConnecionForm,
+    layout: "/admin",
+    display:"no"
+  }
+  ,
+  {
     path: "/dbConnectionForm",
     name: "Db Connection Form",
     icon: "pe-7s-user",

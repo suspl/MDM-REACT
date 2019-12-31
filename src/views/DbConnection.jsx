@@ -28,6 +28,7 @@ class DbConnection extends Component {
   componentDidMount()//called after render method
   {
    // console.log("updateId="+updateId);
+   // console.log("updateId[0]=="+updateId[0]);
     this.getAllDBDetails();
   }
  
@@ -41,13 +42,37 @@ class DbConnection extends Component {
   getAllDBDetails()
   {
     this.state.tdarr1=[];
+    const requestBody = {
+      query: `
+          query {
+            dbConnectionDetails {
+              _id
+              dbType
+              connectionName
+              hostName
+              port
+              userName
+              password
+            }
+          }
+        `
+    };
    // this.setState({tdarr1:[]});
     var temparr2=[];
-    fetch('http://localhost:4000/getdbConnectionDetails')
+    fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    })
     .then(res=>res.json())
     .then(json=>{
+      const dbConnectionDetails = json.data.dbConnectionDetails;
+      console.log("dbConnectionDetails="+dbConnectionDetails);
       this.setState({
-        items:json
+        items:dbConnectionDetails
       });
 
       for(let i=0;i<this.state.items.length;i++)
@@ -90,24 +115,35 @@ class DbConnection extends Component {
     // this.setState({Id:event.target.id});
     // this.setState({viewdbDetails:true});
     
-    updateId[0] = event.target.id;
-    console.log("updateId=="+updateId[0]);
-    let path = `/admin/dbConnectionForm`;
+   // updateId[0] = event.target.id;
+   // console.log("updateId=="+updateId[0]);
+    let path = `/admin/dbConnectionForm/`+event.target.id;
+   // console.log("path="+path);
     this.props.history.push(path);
   }
   
   deleteDBDetails(event)
   {
     console.log("deleteProfile="+event.target.id);
-    fetch('http://localhost:4000/deleteById/'+event.target.id, {
+    const requestBody = {
+      query: `
+          mutation DeleteByIdDbDetailsById($id: ID!) {
+            deleteByIdDbDetailsById(Id: $id) {
+            _id
+            }
+          }
+        `,
+      variables: {
+        id: event.target.id
+      }
+    };
+    fetch('http://localhost:4000/graphql' ,{
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        active:"No"
-      }),
+      body: JSON.stringify(requestBody),
     })
     .then((res)=>{
       window.alert('Profile Deleted');
@@ -125,12 +161,11 @@ class DbConnection extends Component {
     if(this.state.gotData==true){
       temptable = <TableComp tdArray1={this.state.tdarr1} name="ss"/>
     }
-    if(viewdbDetails == true)
-    {
-     //console.log("dbConnectionForm");
-      dbConnectionForm = <DbConnecionForm Id={Id}></DbConnecionForm>
-    }
-    if(viewdbDetails == false){
+   // if(viewdbDetails == true)
+   // {
+   //   dbConnectionForm = <DbConnecionForm Id={Id}></DbConnecionForm>
+   // }
+   // if(viewdbDetails == false){
      // console.log("dbConnectionList");
        dbList =<div><Row>
         <Col md={12}>
@@ -154,13 +189,13 @@ class DbConnection extends Component {
         </Col>
       </Row>
       </div>
-    }
+   // }
     
     return (
       <div className="content">
         <Grid fluid>
          {dbList}
-         {dbConnectionForm}
+         {/* {dbConnectionForm} */}
         </Grid>
       </div>
     );

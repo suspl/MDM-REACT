@@ -9,6 +9,7 @@ import {updateId} from "variables/Variables.jsx";
 class DbConnecionForm extends Component {
   constructor(props)
   {
+    console.log(props.match.params.id);
     super(props);
     this.state={
       items:{},
@@ -30,12 +31,13 @@ class DbConnecionForm extends Component {
   
 
   componentDidMount(){
-    console.log("props=="+this.state.Id);
-    if(updateId[0]!=0){
-      this.state.Id = updateId[0];
+    console.log("props=="+this.props.match.params.id);
+   // if(updateId[0]!=0){
+    if(this.props.match.params.id!=undefined){
+     // this.state.Id = updateId[0];
+      this.state.Id = this.props.match.params.id;
       this.fetchDbDetailsById();
     }
-    
   }
   
 
@@ -56,16 +58,46 @@ class DbConnecionForm extends Component {
         errors: {}
       });
       this.setState({updateProfile:true});
-      fetch('http://localhost:4000/getDbDetailsById/'+this.state.Id)
+
+      const requestBody = {
+        query: `
+            query GetDbDetailsById($id: ID!) {
+              getDbDetailsById(Id: $id) {
+                _id
+                dbType
+                connectionName
+                hostName
+                port
+                userName
+                password
+              }
+            }
+          `,
+        variables: {
+          id: this.state.Id
+        }
+      };
+
+      fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
       .then(res=>res.json())
       .then(json=>{
         var responseLength = Object.keys(json).length;
-        if(responseLength!=0){
-          console.log("json---"+json[0].dbType);
+        console.log("responseLength="+json.data);
+        if(json.data!=null){
+          const dbConnectionDetails = json.data.getDbDetailsById;
+          //console.log("dbConnectionDetails---"+dbConnectionDetails.dbType);
           this.setState({
-            items:json[0]
+            items:dbConnectionDetails
           });
-          updateId[0] = 0;
+         // updateId[0] = 0;
+        // console.log("updateId[0]=="+updateId[0]);
         }
       });
     
@@ -79,18 +111,46 @@ class DbConnecionForm extends Component {
     if (this.validateForm())   //----validation---
       {
         let myobj =  this.state.items;
-        fetch('http://localhost:4000/addDbDetails', {
+        const requestBody = {
+          query: `
+              mutation AddDbDetails($dbType: String!, $connectionName: String!, $hostName: String!, $port: String!, $userName: String!, $password: String!) {
+                addDbDetails(dbInput: {dbType: $dbType, connectionName: $connectionName, hostName: $hostName, port: $port, userName: $userName, password: $password}) {
+                  _id
+                  dbType
+                  connectionName
+                  hostName
+                  port
+                  userName
+                  password
+                }
+              }
+            `,
+            // variables: {
+            //   dbType:this.state.items.dbType,
+            //   connectionName:this.state.items.connectionName,
+            //   hostName:this.state.items.hostName,
+            //   port:this.state.items.port,
+            //   userName:this.state.items.userName,
+            //   password:this.state.items.password
+            // }
+            variables:myobj
+        };
+        //console.log("length---"+JSON.stringify(requestBody));
+        fetch('http://localhost:4000/graphql', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(myobj),
+          body: JSON.stringify(requestBody),
         })
         .then((res)=>{
-          this.setState({items:{}});
-          window.alert('New DB Connection Added');
-          window.location.reload();
+          console.log("length---"+res.status);
+          if(res.status==200){
+            this.setState({items:{}});
+            window.alert('New DB Connection Added');
+          // window.location.reload();
+          }
         });
     }
     //------
@@ -103,18 +163,48 @@ class DbConnecionForm extends Component {
     {
       let myobj =  this.state.items;
       console.log("myobj=="+myobj);
-      fetch('http://localhost:4000/updateById/'+this.state.Id, {
+      myobj["id"] = this.state.Id;
+      const requestBody = {
+        query: `
+            mutation UpdateDbDetailsById($id: ID!, $dbType: String!, $connectionName: String!, $hostName: String!, $port: String!, $userName: String!, $password: String!) {
+              updateDbDetailsById(Id:$id,dbInput: {dbType: $dbType, connectionName: $connectionName, hostName: $hostName, port: $port, userName: $userName, password: $password}) {
+                _id
+                dbType
+                connectionName
+                hostName
+                port
+                userName
+                password
+              }
+            }
+          `,
+          variables:myobj
+          // variables: {
+          //   id: this.state.Id,
+          //     dbType:this.state.items.dbType,
+          //     connectionName:this.state.items.connectionName,
+          //     hostName:this.state.items.hostName,
+          //     port:this.state.items.port,
+          //     userName:this.state.items.userName,
+          //     password:this.state.items.password
+          //   }
+      };
+      console.log("length---"+JSON.stringify(requestBody));
+      fetch('http://localhost:4000/graphql',{
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(myobj),
+        body: JSON.stringify(requestBody),
       })
       .then((res)=>{
-        this.setState({items:{},Id:''});
-        window.alert('Updation successful');
-        window.location.reload();
+        console.log("length---"+res.status);
+        if(res.status==200){
+          this.setState({items:{},Id:''});
+          window.alert('Updation successful');
+          window.location.reload();
+        }
       });
     }
   
